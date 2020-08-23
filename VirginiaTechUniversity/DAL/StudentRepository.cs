@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using VirginiaTechUniversity.Models;
 
 namespace VirginiaTechUniversity.DAL
@@ -38,13 +40,13 @@ namespace VirginiaTechUniversity.DAL
         //UPDATE
         public void UpdateStudent(Student student)
         {
-            throw new NotImplementedException();
+            context.Entry(student).State = EntityState.Modified;
         }
 
         //DELETE
         public void DeleteStudent(int Id)
         {
-            var student = context.Students.Find(Id);
+            Student student = context.Students.Find(Id);
             context.Students.Remove(student);
         }
 

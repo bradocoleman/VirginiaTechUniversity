@@ -14,27 +14,28 @@ namespace VirginiaTechUniversity.Controllers
 {
     public class StudentController : Controller
     {
-        private SchoolContext db = new SchoolContext();
+        private IStudentRepository studentRepository;
+
+        public StudentController()
+        {
+            this.studentRepository = new StudentRepository(new SchoolContext());
+        }
+
+        public StudentController(IStudentRepository studentRepository)
+        {
+            this.studentRepository = studentRepository;
+        }
 
         // GET: Student
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
-            return View(await db.Students.ToListAsync());
+            return View(studentRepository.GetStudents());
         }
 
         // GET: Student/Details/5
-        public async Task<ActionResult> Details(int? id)
+        public ActionResult Details(int id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Student student = await db.Students.FindAsync(id);
-            if (student == null)
-            {
-                return HttpNotFound();
-            }
-            return View(student);
+            return View(studentRepository.GetStudentById(id));
         }
 
         // GET: Student/Create
@@ -46,30 +47,22 @@ namespace VirginiaTechUniversity.Controllers
         // POST: Student/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "StudentId,LastName,FirstMidName,EnrollmentDate")] Student student)
+        public ActionResult Create([Bind(Include = "StudentId,LastName,FirstMidName,EnrollmentDate")] Student student)
         {
             if (ModelState.IsValid)
             {
-                db.Students.Add(student);
-                await db.SaveChangesAsync();
+                studentRepository.InsertStudent(student);
+                studentRepository.Save();
                 return RedirectToAction("Index");
             }
 
-            return View(student);
+            return Content("Model state is not valid");
         }
 
         // GET: Student/Edit/5
-        public async Task<ActionResult> Edit(int? id)
+        public ActionResult Edit(int id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Student student = await db.Students.FindAsync(id);
-            if (student == null)
-            {
-                return HttpNotFound();
-            }
+            var student = studentRepository.GetStudentById(id);
             return View(student);
         }
 
@@ -78,49 +71,37 @@ namespace VirginiaTechUniversity.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "StudentId,LastName,FirstMidName,EnrollmentDate")] Student student)
+        public ActionResult Edit([Bind(Include = "StudentId,LastName,FirstMidName,EnrollmentDate")] Student student)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(student).State = EntityState.Modified;
-                await db.SaveChangesAsync();
+                studentRepository.UpdateStudent(student);
+                studentRepository.Save();
                 return RedirectToAction("Index");
             }
-            return View(student);
+            return Content("Model state is not valid");
         }
 
         // GET: Student/Delete/5
-        public async Task<ActionResult> Delete(int? id)
+        public ActionResult Delete(int id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Student student = await db.Students.FindAsync(id);
-            if (student == null)
-            {
-                return HttpNotFound();
-            }
-            return View(student);
+
+            return View(studentRepository.GetStudentById(id));
         }
 
         // POST: Student/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int id)
         {
-            Student student = await db.Students.FindAsync(id);
-            db.Students.Remove(student);
-            await db.SaveChangesAsync();
+            studentRepository.DeleteStudent(id);
+            studentRepository.Save();
             return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                db.Dispose();
-            }
+            studentRepository.Dispose();
             base.Dispose(disposing);
         }
     }

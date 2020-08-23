@@ -6,7 +6,7 @@ using VirginiaTechUniversity.Models;
 
 namespace VirginiaTechUniversity.DAL
 {
-    interface IStudentRepository : IDisposable
+    public interface IStudentRepository : IDisposable
     {
         IEnumerable<Student> GetStudents();
         Student GetStudentById(int Id);
