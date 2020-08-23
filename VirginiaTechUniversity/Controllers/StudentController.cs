@@ -14,28 +14,30 @@ namespace VirginiaTechUniversity.Controllers
 {
     public class StudentController : Controller
     {
-        private IStudentRepository studentRepository;
+        private UnitOfWork unitOfWork = new UnitOfWork();
 
-        public StudentController()
-        {
-            this.studentRepository = new StudentRepository(new SchoolContext());
-        }
+        //public StudentController()
+        //{
+        //    this.studentRepository = new StudentRepository(new SchoolContext());
+        //}
 
-        public StudentController(IStudentRepository studentRepository)
-        {
-            this.studentRepository = studentRepository;
-        }
+        //public StudentController(IStudentRepository studentRepository)
+        //{
+        //    this.studentRepository = studentRepository;
+        //}
 
         // GET: Student
         public ActionResult Index()
         {
-            return View(studentRepository.GetStudents());
+            var students = unitOfWork.StudentRepository.Get();
+            return View(students);
         }
 
         // GET: Student/Details/5
         public ActionResult Details(int id)
         {
-            return View(studentRepository.GetStudentById(id));
+            var student = unitOfWork.StudentRepository.GetById(id);
+            return View(student);
         }
 
         // GET: Student/Create
@@ -51,8 +53,8 @@ namespace VirginiaTechUniversity.Controllers
         {
             if (ModelState.IsValid)
             {
-                studentRepository.InsertStudent(student);
-                studentRepository.Save();
+                unitOfWork.StudentRepository.Insert(student);
+                unitOfWork.Save();
                 return RedirectToAction("Index");
             }
 
@@ -62,7 +64,7 @@ namespace VirginiaTechUniversity.Controllers
         // GET: Student/Edit/5
         public ActionResult Edit(int id)
         {
-            var student = studentRepository.GetStudentById(id);
+            var student = unitOfWork.StudentRepository.GetById(id);
             return View(student);
         }
 
@@ -75,8 +77,8 @@ namespace VirginiaTechUniversity.Controllers
         {
             if (ModelState.IsValid)
             {
-                studentRepository.UpdateStudent(student);
-                studentRepository.Save();
+                unitOfWork.StudentRepository.Update(student);                
+                unitOfWork.Save();
                 return RedirectToAction("Index");
             }
             return Content("Model state is not valid");
@@ -86,7 +88,7 @@ namespace VirginiaTechUniversity.Controllers
         public ActionResult Delete(int id)
         {
 
-            return View(studentRepository.GetStudentById(id));
+            return View(unitOfWork.StudentRepository.GetById(id));
         }
 
         // POST: Student/Delete/5
@@ -94,14 +96,14 @@ namespace VirginiaTechUniversity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            studentRepository.DeleteStudent(id);
-            studentRepository.Save();
+            unitOfWork.StudentRepository.Delete(id);
+            unitOfWork.Save();
             return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)
         {
-            studentRepository.Dispose();
+            unitOfWork.Dispose();
             base.Dispose(disposing);
         }
     }
