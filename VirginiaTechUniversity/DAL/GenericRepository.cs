@@ -56,7 +56,6 @@ namespace VirginiaTechUniversity.DAL
             Delete(entityToDelete);
         }
 
-        /*
         public virtual void Delete(TEntity entityToDelete)
         {
             if (context.Entry(entityToDelete).State == EntityState.Detached)
@@ -71,6 +70,6 @@ namespace VirginiaTechUniversity.DAL
             dBSet.Attach(entityToUpdate);
             context.Entry(entityToUpdate).State = EntityState.Modified;
         }
-        */
+       
     }
 }
