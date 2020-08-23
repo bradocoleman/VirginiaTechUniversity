@@ -25,10 +25,10 @@ namespace VirginiaTechUniversity.DAL
 
         //READ
         public Student GetStudentById(int Id)
-        {
-            return context.Students.Find(Id);
-            //why cant we use the following?
-            //return context.Students.SingleOrDefault(x => x.StudentId == Id);
+        { 
+            //return context.Students.Find(Id);
+            //why cant we use the following? WE CAN!
+            return context.Students.SingleOrDefault(x => x.StudentId == Id);
         }
 
         //READ
