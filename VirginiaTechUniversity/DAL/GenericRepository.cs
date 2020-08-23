@@ -44,8 +44,8 @@ namespace VirginiaTechUniversity.DAL
             return dBSet.Find(Id);
         }
 
-        //PURPOSELY LEFT OUT THE VIRTUAL KEYWORD - WHAT WILL HAPPEN?
-        public void Insert(TEntity entity)
+        
+        public virtual void Insert(TEntity entity)
         {
             dBSet.Add(entity);
         }
